@@ -93,14 +93,56 @@ function CanvasPadApp()
       canvas2d.restorePen();
     }
 
+    function tollbarButtonClicked(action)
+    {
+      switch (action)
+      {
+        case "clear":
+            if (confirm("Clear the canvas?"))
+            {
+              actions = [];
+              redraw();
+            }
+            break;
+        case "undo":
+            actions.pop();
+            redraw();
+            break;
+      }
+    }
+
+    function menuItemClicked(option, value)
+    {
+      canvas2d[option](value);
+    }
+
+    function initColorMenu()
+    {
+      $("#color-menu li").each(function(i, e) {
+        $(e).css("background-color", $(e).data("value"));
+      });
+    }
+
+    function initWidthMenu()
+    {
+      $("#width-menu li").each(function(i, e) {
+        $(e).css("border-bottom", $(e).data("value") + "px solid black");
+      });
+    }
+
     this.start = function()
     {
       $("app header").append(version);
+
+      initColorMenu();
+      initWidthMenu();
 
       $("main>canvas").mousemove(onMouseMove)
           .mousedown(onMouseDown)
           .mouseup(onMouseUp)
           .mouseout(onMouseUp);
+      toolbar.toolbarButtonClicked = toolbarButtonClicked;
+      toolbar.menuItemClicked = menuItemClicked;
     };
 }
 
