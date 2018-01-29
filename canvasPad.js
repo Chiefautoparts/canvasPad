@@ -3,7 +3,7 @@
 function CanvasPadApp()
 {
   var version = "4.2",
-      canvas2d = new Convas2D($("#main>canvas")),
+      canvas2d = new Canvas2D($("#main>canvas")),
       toolbar = new Toolbar($("#toolbar")),
       drawing = false,
       curTool = "pen",
@@ -93,7 +93,7 @@ function CanvasPadApp()
       canvas2d.restorePen();
     }
 
-    function tollbarButtonClicked(action)
+    function toolbarButtonClicked(action)
     {
       switch (action)
       {

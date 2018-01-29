@@ -27,7 +27,7 @@ function Toolbar($toolbar)
 
   function showMenu($menu)
   {
-    if ($menu.ls(":visible"))
+    if ($menu.is(":visible"))
     {
       $menu.fadeOut("fast");
     }
