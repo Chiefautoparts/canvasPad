@@ -6,7 +6,7 @@ function Canvas2D($canvas)
     height = $canvas[0].height,
     pageOffset = $canvas.offset();
 
-  $(window).resize(function() { pageOffset = $canvas.offset() });
+  $(window).resize(function() { pageOffset = $canvas.offset(); });
 
   // Set defaults
   context.lineWidth = 4;
@@ -83,6 +83,33 @@ function Canvas2D($canvas)
       context.lineTo(points[i].x, points[i].y);
     }
     context.stroke();
+    return this;
+  };
+
+  this.drawLine = function(point1, point2)
+  {
+    context.beginPath();
+    context.moveTo(point1.x, point1.y);
+    context.lineTo(point2.x, point2.y);
+    context.stroke();
+    return this;
+  }
+
+  this.drawRect = function(point1, point2, fill)
+  {
+    var w = point2.x - point1.x,
+        h = point2.y - point1.y;
+    if (fill) context.fillRect(point1.x, point1y, w,h);
+    else context.strokeRect(point1.x, point1.y, w, h);
+    return this;
+  };
+
+  this.drawCircle = function(center, radius, fill)
+  {
+    context.beginPath();
+    context.arc(center.x, center.y, radius, 0, 2 * Math.PI, true)
+    if (fill) context.fill();
+    else context.stroke();
     return this;
   };
 }

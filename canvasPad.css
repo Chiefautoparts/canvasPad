@@ -58,6 +58,7 @@ button
 {
   cursor: crosshair;
   margin: 1em auto;
+  color: black;
   background-color: white;
   box-shadow: 0 0 8px 2px #555;
 }
@@ -104,8 +105,12 @@ button
   font-size: .75em;
   cursor: pointer;
 }
+#toolbar .menu>li:hover
+{
+  background-color: aliceBlue;
+}
 #toolbar .menu>li.selected
 {
   list-style-type: circle;
-  background-color: blue;
+  background-color: lightblue;
 }

@@ -2,13 +2,14 @@
 
 function CanvasPadApp()
 {
-  var version = "4.2",
+  var version = "4.3",
       canvas2d = new Canvas2D($("#main>canvas")),
       toolbar = new Toolbar($("#toolbar")),
       drawing = false,
       curTool = "pen",
       curAction = newAction(curTool),
-      actions = [];
+      actions = [],
+      fillShapes = true;
 
   function showCoordinates(point)
   {
@@ -23,6 +24,7 @@ function CanvasPadApp()
       color: canvas2d.penColor(),
       width: canvas2d.penWidth(),
       opacity: canvas2d.penOpacity(),
+      fill: fillShapes,
       points: []
     };
   }
@@ -53,7 +55,15 @@ function CanvasPadApp()
 
       if (drawing)
       {
-        curAction.points.push(cnavasPoint);
+        if (curTool == "pen")
+        {
+          // add another point
+          curAction.points.push(canvasPoint);
+        }
+        else
+        {
+          curAction.points[1] = canvasPoint;
+        }
         redraw();
       }
     }
@@ -88,7 +98,24 @@ function CanvasPadApp()
           .penWidth(action.width)
           .penOpacity(action.opacity)
 
-        canvas2d.drawPoints(action.points);
+        switch (action.tool)
+        {
+          case "pen":
+            canvas2d.drawPoints(action.points);
+            break;
+          case "line":
+            canvas2d.drawLine(action.points[0], action.points[1]);
+            break;
+          case "rect":
+            canvasPad.drawRect(action.points[0], action.points[1], action.fill);
+            break;
+          case "circle":
+            var dx = Math.abs(action.points[1].x - action.points[0].x);
+            var dy = Math.abs(action.points[1].y - action.points[0].y);
+            var radius = Math.min(dx, dy);
+            canvas2d.drawCircle(action.points[0], radius, action.fill);
+            break;
+        }
       }
       canvas2d.restorePen();
     }
@@ -113,7 +140,17 @@ function CanvasPadApp()
 
     function menuItemClicked(option, value)
     {
-      canvas2d[option](value);
+      switch (option)
+      {
+        case "drawingTool":
+          curTool = value;
+          break;
+        case "fillShapes":
+          fillShapes = Boolean(value);
+          break;
+        default:
+          canvas2d[option](value);
+      }
     }
 
     function initColorMenu()
