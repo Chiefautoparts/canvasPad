@@ -2,15 +2,29 @@
 
 function CanvasPadApp()
 {
-  var version = "4.1",
+  var version = "4.2",
       canvas2d = new Convas2D($("#main>canvas")),
+      toolbar = new Toolbar($("#toolbar")),
       drawing = false,
-      points = [],
+      curTool = "pen",
+      curAction = newAction(curTool),
       actions = [];
 
   function showCoordinates(point)
   {
     $("#coords").text(point.x + ", " + point.y);
+  }
+
+  // Factory function to create an action
+  function newAction(tool)
+  {
+    return {
+      tool: tool,
+      color: canvas2d.penColor(),
+      width: canvas2d.penWidth(),
+      opacity: canvas2d.penOpacity(),
+      points: []
+    };
   }
 
   function onMouseDown(e)
@@ -21,10 +35,11 @@ function CanvasPadApp()
   }
   function penDown(pageX, pageY)
   {
+    toolbar.hideMenus();
     drawing = true;
-    points = [];
-    points.push(canvas2d.getCanvasPoint(pageX, pageY));
-    actions.push(points);
+    curAction = newAction(curTools);
+    curAction.points.push(canvas2d.getCanvasPoint(pageX, pageY));
+    actions.push(curAction);
   }
 
   function onMouseMove(e)
@@ -38,7 +53,7 @@ function CanvasPadApp()
 
       if (drawing)
       {
-        points.push(cnavasPoint);
+        curAction.points.push(cnavasPoint);
         redraw();
       }
     }
@@ -52,16 +67,30 @@ function CanvasPadApp()
       if (drawing)
       {
         drawing = false;
+        if (curAction.points.length < 2)
+        {
+          // an action needs at least two points to draw it
+          actions.pop()
+        }
       }
     }
 
     function redraw()
     {
       canvas2d.clear();
+      canvas2d.savePen();
+
       for (var i in actions)
       {
-        canvas2d.drawPoints(actions[i]);
+        var action = actions[i]
+        canvas2d
+          .penColor(action.color)
+          .penWidth(action.width)
+          .penOpacity(action.opacity)
+
+        canvas2d.drawPoints(action.points);
       }
+      canvas2d.restorePen();
     }
 
     this.start = function()
